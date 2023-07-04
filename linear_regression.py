@@ -3,6 +3,7 @@ from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
 
 
 class MyLinearRegression:
@@ -70,15 +71,35 @@ if __name__ == '__main__':
     data = load_diabetes()
     X = data.data
     y = data.target
-    
+
+    # 作图可以发现各个维度和最终结果的相关性较差,线性回归解决不了该问题
+    X_fig = X.T
+    index = ['age', 'sex', 'bmi', 'bp', 's1', 's2', 's3', 's4', 's5', 's6']
+    fig, axs = plt.subplots(5, 2)
+    for i in range(0, X_fig.shape[0], 2):
+        row = int(i / 2 )  
+        print(row)
+        axs[row][0].scatter(X_fig[i], y)
+        axs[row][0].set_xlabel(index[i])
+        axs[row][0].set_yticks(np.arange(0, 300, 50))
+
+        axs[row][1].scatter(X_fig[i+1], y)
+        axs[row][1].set_xlabel(index[i+1])
+        axs[row][1].set_yticks(np.arange(0, 300, 50))
+        
+    fig.set_size_inches(h=12, w=10)
+    # plt.subplots_adjust(hspace=6)
+    plt.tight_layout()
+    plt.show()
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
     y_train = y_train.reshape((y_train.shape[0],1))
     y_test = y_test.reshape((y_test.shape[0],1))
 
     l1 = MyLinearRegression()
-    # w, loss, iters = l1.fit(X_train, y_train, learning_rate=0.001, loss_change=0.0000000001, max_iter=30000)
-    w, loss, iters = l1.fit2(X_train, y_train, learning_rate=0.001, loss_change=0.0000000001, epoch=500, batch_size=40)
+    w, loss, iters = l1.fit(X_train, y_train, learning_rate=0.001, loss_change=0.0000000001, max_iter=30000)
+    # w, loss, iters = l1.fit2(X_train, y_train, learning_rate=0.001, loss_change=0.0000000001, epoch=500, batch_size=40)
     print('权重1', w)
     y_pre1 = l1.predict(X_test)
     mse1 = mean_squared_error(y_test, y_pre1)
@@ -92,11 +113,6 @@ if __name__ == '__main__':
     print('均方误差2：', mse2)
 
     print('预测结果对比', np.hstack((y_pre1, y_pre2)))
+
+    print('预测值-真实值', np.hstack((y_pre1, y_test))) 
     
-    
-   
-
-
-
-
-
