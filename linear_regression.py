@@ -7,10 +7,16 @@ import matplotlib.pyplot as plt
 
 
 class MyLinearRegression:
+    """
+    损失函数 = 每个样本损失的平方和，而每个样本的损失(xw-y)^2在w参数空间内必然是处处可微的，因此梯度必然存在。如果损失函数关于w参数空间不可微，则无法使用梯度下降法求解
+    线性回归其实可以使用正规解形式，但是要求X.T*X是满秩的，或者正定的，实际上样本数量可能与特征数量相差较大，大部分时候不是满秩的，梯度下降法更适用
+    使用两种梯度下降法来进行线性回归：批量梯度下降、随机小批量梯度下降
+    """
     def __init__(self) -> None:
         self._center = 0
         self._std = 0
         self._weight = None
+
     def fit(self, X:np.ndarray, y:np.ndarray, learning_rate, loss_change, max_iter):
         X = self._rescale(X)
         X = np.hstack((X, np.ones((X.shape[0],1))))
@@ -31,7 +37,6 @@ class MyLinearRegression:
     def fit2(self, X:np.ndarray, y:np.ndarray, learning_rate, loss_change, epoch, batch_size):
         X = self._rescale(X)
         X = np.hstack((X, np.ones((X.shape[0],1))))
-        
         w = np.zeros((X.shape[1],1))
         
         last_loss = 0
